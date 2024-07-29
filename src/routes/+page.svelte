@@ -1,11 +1,35 @@
 <script lang="ts">
-  // import { invoke } from "@tauri-apps/api/tauri";
-  // import { emit, listen } from "@tauri-apps/api/event";
+  import { invoke } from "@tauri-apps/api/tauri";
 
-  type StringPayload = { value: string };
+  let input = "";
+  let output = "";
+
+  async function handleSubmit(_: SubmitEvent) {
+    output = (await invoke("evaluate_expression", {
+      expression: input,
+    })) as string;
+  }
+
+  async function handleClear() {
+    input = "";
+    output = "";
+    await invoke("clear_expression");
+  }
+
+  async function handleClearEntry() {
+    input = "";
+  }
 </script>
 
-<main>Hello, World!</main>
+<main>
+  <form on:submit|preventDefault={handleSubmit}>
+    <input type="text" bind:value={input} />
+    <button type="submit"> &equals; </button>
+    <button type="button" on:click={handleClear}> C </button>
+    <button type="button" on:click={handleClearEntry}> CE </button>
+  </form>
+  <div>{output}</div>
+</main>
 
 <style>
   :root {

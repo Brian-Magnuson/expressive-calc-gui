@@ -3,38 +3,30 @@
 
 use expressive_calc::Calculator;
 use std::sync::Mutex;
-use tauri::Manager;
+use tauri::State;
 
-#[derive(serde::Deserialize)]
-struct StringPayload {
-    value: String,
+#[tauri::command]
+fn evaluate_expression(expression: &str, calculator: State<Mutex<Calculator>>) -> String {
+    let mut calc = calculator.lock().unwrap();
+    match calc.evaluate(expression) {
+        Ok((name, value)) => format!("{} = {}", name, value),
+        Err(err) => err.to_string(),
+    }
+}
+
+#[tauri::command]
+fn reset_calculator(calculator: State<Mutex<Calculator>>) {
+    let mut calc = calculator.lock().unwrap();
+    calc.reset();
 }
 
 fn main() {
     tauri::Builder::default()
-        .setup(|app| {
-            let window = app.get_window("main").unwrap();
-            let calculator = Mutex::new(Calculator::new());
-
-            app.listen_global("evaluate", move |event| {
-                // The event message is a JSON string
-                let message = event.payload().unwrap();
-                // Deserialize the JSON string into a struct
-                let payload: StringPayload = serde_json::from_str(&message).unwrap();
-
-                // Lock the calculator and evaluate the expression
-                let result = match calculator.lock().unwrap().evaluate(&payload.value) {
-                    Ok((name, value)) => format!("{} = {}", name, value),
-                    Err(err) => err.to_string(),
-                };
-                // Calculator lock is released here
-
-                // Send the result back to the front-end
-                window.emit("result", result).unwrap();
-            });
-
-            Ok(())
-        })
+        .manage(Mutex::new(Calculator::new()))
+        .invoke_handler(tauri::generate_handler![
+            evaluate_expression,
+            reset_calculator
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
