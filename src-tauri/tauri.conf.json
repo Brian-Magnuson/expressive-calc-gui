@@ -19,7 +19,8 @@
     },
     "windows": [
       {
-        "title": "expressive-calc-gui",
+        "label": "main",
+        "title": "Expressive Calculator",
         "width": 800,
         "height": 600
       }
