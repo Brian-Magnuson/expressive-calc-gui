@@ -29,6 +29,24 @@
   async function handleClearEntry() {
     input = "";
   }
+
+  const symbols = [
+    "7",
+    "8",
+    "9",
+    "/",
+    "4",
+    "5",
+    "6",
+    "*",
+    "1",
+    "2",
+    "3",
+    "-",
+    "0",
+    ".",
+    "+",
+  ];
 </script>
 
 <main>
@@ -44,9 +62,19 @@
       bind:this={inputElement}
       bind:value={input}
     />
-    <button type="submit"> &equals; </button>
-    <button type="button" on:click={handleClear}> C </button>
-    <button type="button" on:click={handleClearEntry}> CE </button>
+    <div class="button-grid">
+      <button type="submit"> &equals; </button>
+      <button type="button" on:click={handleClear}> C </button>
+      <button type="button" on:click={handleClearEntry}> CE </button>
+      <button type="button" on:click={() => (input = input.slice(0, -1))}>
+        &larr;
+      </button>
+      {#each symbols as symbol}
+        <button type="button" on:click={() => (input += symbol)}>
+          {symbol}
+        </button>
+      {/each}
+    </div>
   </form>
 </main>
 
@@ -98,7 +126,7 @@
 
   .lower {
     /* align */
-    flex: 1;
+    flex: 1.5;
   }
 
   .lower .input {
@@ -110,6 +138,18 @@
     border-radius: 0;
     /* content */
     padding: 0.5rem;
+  }
+
+  .lower .button-grid {
+    /* content */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: minmax(40px, auto);
+  }
+
+  .lower .button-grid button {
+    /* style */
+    font-size: 1.3rem;
   }
 
   @media (prefers-color-scheme: dark) {
