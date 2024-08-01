@@ -11,7 +11,7 @@
   let input = "";
   let outputs: string[] = [];
 
-  async function handleSubmit(_: SubmitEvent) {
+  async function handleSubmit() {
     const output = (await invoke("evaluate_expression", {
       expression: input,
     })) as string;
@@ -30,22 +30,41 @@
     input = "";
   }
 
-  const symbols = [
-    "7",
-    "8",
-    "9",
-    "/",
-    "4",
-    "5",
-    "6",
-    "*",
-    "1",
-    "2",
-    "3",
-    "-",
-    "0",
-    ".",
-    "+",
+  type CalcButton = {
+    s: string;
+    f?: () => void;
+  };
+
+  const buttons: CalcButton[][] = [
+    [
+      { s: "⌫", f: () => (input = input.slice(0, -1)) },
+      { s: "(" },
+      { s: ")" },
+      { s: "," },
+      { s: "C", f: async () => await handleClear() },
+    ],
+    [
+      { s: "7" },
+      { s: "8" },
+      { s: "9" },
+      { s: "/" },
+      { s: "sqrt", f: () => (input += "sqrt(") },
+    ],
+    [{ s: "4" }, { s: "5" }, { s: "6" }, { s: "*" }, { s: "^" }],
+    [
+      { s: "1" },
+      { s: "2" },
+      { s: "3" },
+      { s: "-" },
+      { s: "abs", f: () => (input += "abs(") },
+    ],
+    [
+      { s: "0" },
+      { s: "." },
+      { s: "ans", f: () => (input += "$ans") },
+      { s: "+" },
+      { s: "=", f: async () => await handleSubmit() },
+    ],
   ];
 </script>
 
@@ -63,16 +82,9 @@
       bind:value={input}
     />
     <div class="button-grid">
-      <button type="submit"> &equals; </button>
-      <button type="button" on:click={handleClear}> C </button>
-      <button type="button" on:click={handleClearEntry}> CE </button>
-      <button type="button" on:click={() => (input = input.slice(0, -1))}>
-        &larr;
-      </button>
-      {#each symbols as symbol}
-        <button type="button" on:click={() => (input += symbol)}>
-          {symbol}
-        </button>
+      {#each buttons.flat() as { s, f }}
+        <button on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
+        >
       {/each}
     </div>
   </form>
@@ -143,7 +155,7 @@
   .lower .button-grid {
     /* content */
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: minmax(40px, auto);
   }
 
