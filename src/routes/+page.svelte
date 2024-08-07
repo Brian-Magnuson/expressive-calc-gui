@@ -69,36 +69,50 @@
 </script>
 
 <main>
-  <div class="upper">
-    {#each outputs as output}
-      <div class="entry">{output}</div>
-    {/each}
-  </div>
-  <form class="lower" on:submit|preventDefault={handleSubmit}>
-    <input
-      class="input"
-      type="text"
-      bind:this={inputElement}
-      bind:value={input}
-    />
-    <div class="button-grid">
-      {#each buttons.flat() as { s, f }}
-        <button on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
-        >
+  <div class="container">
+    <div class="upper">
+      {#each outputs as output}
+        <div class="entry">{output}</div>
       {/each}
     </div>
-  </form>
+    <form class="lower" on:submit|preventDefault={handleSubmit}>
+      <input
+        class="input"
+        type="text"
+        bind:this={inputElement}
+        bind:value={input}
+      />
+      <div class="button-grid">
+        {#each buttons.flat() as { s, f }}
+          <button
+            type="button"
+            on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
+          >
+        {/each}
+      </div>
+    </form>
+  </div>
 </main>
 
 <style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
   :root {
     font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
+    font-size: 24px;
     line-height: 24px;
     font-weight: 400;
 
+    --base-100: #f6f6f6;
+    --base-200: #eeeeee;
+    --base-300: #dfdfdf;
+
     color: #0f0f0f;
-    background-color: #f6f6f6;
+    background-color: var(--base-200);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -115,13 +129,32 @@
     /* background: red; */
     /* content */
     display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .container {
+    /* align */
+    height: 100%;
+    width: 100%;
+    max-width: 800px;
+    /* content */
+    padding: 4rem 1rem;
+    display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 
   .upper {
     /* align */
     flex: 1;
+    min-height: 10rem;
+    width: 100%;
     /* style */
+    border: 1px solid var(--base-300);
+    border-bottom: none;
+    border-radius: 0.25rem 0.25rem 0 0;
     /* background: blue; */
     /* content */
     display: flex;
@@ -129,25 +162,34 @@
   }
 
   .upper .entry {
+    /* align */
+    height: 46px;
     /* style */
     text-align: right;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--base-300);
     /* content */
     padding: 0.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 
   .lower {
     /* align */
-    flex: 1.5;
+    width: 100%;
   }
 
   .lower .input {
     /* align */
     display: block;
-    box-sizing: border-box;
     width: 100%;
+    margin-bottom: 1rem;
     /* style */
-    border-radius: 0;
+    color: inherit;
+    border: 1px solid var(--base-300);
+    border-radius: 0 0 0.25rem 0.25rem;
+    background: var(--base-100);
+    font-size: 24px;
     /* content */
     padding: 0.5rem;
   }
@@ -157,17 +199,31 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: minmax(40px, auto);
+    gap: 4px;
   }
 
   .lower .button-grid button {
     /* style */
-    font-size: 1.3rem;
+    font-size: 1rem;
+    color: inherit;
+    background-color: var(--base-100);
+    border: 1px solid var(--base-300);
+    border-radius: 0.25rem;
+  }
+
+  .lower .button-grid button:hover {
+    /* style */
+    background-color: var(--base-200);
+    cursor: pointer;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
+      --base-100: #2f2f2f;
+      --base-200: #2a2a2a;
+      --base-300: #212121;
+
       color: #f6f6f6;
-      background-color: #2f2f2f;
     }
   }
 </style>
