@@ -149,12 +149,13 @@
   .upper {
     /* align */
     flex: 1;
-    min-height: 10rem;
+    min-height: 5rem;
     width: 100%;
     /* style */
     border: 1px solid var(--base-300);
     border-bottom: none;
     border-radius: 0.25rem 0.25rem 0 0;
+    overflow-y: auto;
     /* background: blue; */
     /* content */
     display: flex;
