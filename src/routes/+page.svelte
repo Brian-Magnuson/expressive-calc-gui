@@ -9,15 +9,21 @@
   });
 
   let input = "";
-  let outputs: string[] = [];
+  let outputs: { variable: string; expression: string; result: string }[] = [];
 
   async function handleSubmit() {
     const output = (await invoke("evaluate_expression", {
       expression: input,
     })) as string;
 
-    input = "";
-    outputs = [`${output}`, ...outputs];
+    const matches = output.match(/(\$\d+) = (\d+|NaN)/);
+    if (matches) {
+      const [, variable, result] = matches;
+      outputs = [{ variable, expression: input, result }, ...outputs];
+      input = "";
+    } else {
+      outputs = [{ variable: "", expression: "", result: output }, ...outputs];
+    }
   }
 
   async function handleClear() {
@@ -25,11 +31,6 @@
     outputs = [];
     await invoke("reset_calculator");
   }
-
-  async function handleClearEntry() {
-    input = "";
-  }
-
   type CalcButton = {
     s: string;
     f?: () => void;
@@ -72,7 +73,11 @@
   <div class="container">
     <div class="upper">
       {#each outputs as output}
-        <div class="entry">{output}</div>
+        <div class="entry">
+          <span class="entry-variable">{output.variable}</span>
+          <span>{output.expression}</span>
+          <span>= {output.result}</span>
+        </div>
       {/each}
     </div>
     <form class="lower" on:submit|preventDefault={handleSubmit}>
@@ -171,8 +176,14 @@
     /* content */
     padding: 0.5rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+  }
+
+  .upper .entry-variable {
+    /* align */
+    /* style */
+    font-size: 0.6rem;
   }
 
   .lower {
