@@ -91,6 +91,7 @@
         {#each buttons.flat() as { s, f }}
           <button
             type="button"
+            class={s === "=" ? "button-eq" : ""}
             on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
           >
         {/each}
@@ -144,7 +145,7 @@
     width: 100%;
     max-width: 800px;
     /* content */
-    padding: 4rem 1rem;
+    padding: 1rem 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -227,6 +228,17 @@
     /* style */
     background-color: var(--base-200);
     cursor: pointer;
+  }
+
+  .lower .button-grid .button-eq {
+    /* style */
+    background-color: #1111ff;
+    color: white;
+  }
+
+  .lower .button-grid .button-eq:hover {
+    /* style */
+    background-color: #0101de;
   }
 
   @media (prefers-color-scheme: dark) {
