@@ -67,6 +67,29 @@
       { s: "=", f: async () => await handleSubmit() },
     ],
   ];
+
+  const extraButtons: CalcButton[][] = [
+    [
+      { s: "sin", f: () => (input += "sin(") },
+      { s: "asin", f: () => (input += "asin(") },
+    ],
+    [
+      { s: "cos", f: () => (input += "cos(") },
+      { s: "acos", f: () => (input += "acos(") },
+    ],
+    [
+      { s: "tan", f: () => (input += "tan(") },
+      { s: "atan", f: () => (input += "atan(") },
+    ],
+    [
+      { s: "ln", f: () => (input += "ln(") },
+      { s: "log", f: () => (input += "log(") },
+    ],
+    [
+      { s: "mod", f: () => (input += "mod(") },
+      { s: "deg", f: () => (input += "deg") },
+    ],
+  ];
 </script>
 
 <main>
@@ -87,14 +110,24 @@
         bind:this={inputElement}
         bind:value={input}
       />
-      <div class="button-grid">
-        {#each buttons.flat() as { s, f }}
-          <button
-            type="button"
-            class={s === "=" ? "button-eq" : ""}
-            on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
-          >
-        {/each}
+      <div class="button-grid-container">
+        <div class="button-grid">
+          {#each buttons.flat() as { s, f }}
+            <button
+              type="button"
+              class={s === "=" ? "button-eq" : ""}
+              on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
+            >
+          {/each}
+        </div>
+        <div class="button-grid extra-buttons">
+          {#each extraButtons.flat() as { s, f }}
+            <button
+              type="button"
+              on:click|preventDefault={f ? f : () => (input += s)}>{s}</button
+            >
+          {/each}
+        </div>
       </div>
     </form>
   </div>
@@ -207,12 +240,28 @@
     padding: 0.5rem;
   }
 
+  .lower .button-grid-container {
+    /* content */
+    display: flex;
+    gap: 4px;
+  }
+
   .lower .button-grid {
+    /* align */
+    flex-grow: 5;
     /* content */
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-auto-rows: minmax(40px, auto);
     gap: 4px;
+  }
+
+  .lower .button-grid.extra-buttons {
+    /* align */
+    flex-grow: 2;
+    display: none;
+    /* style */
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .lower .button-grid button {
@@ -248,6 +297,12 @@
       --base-300: #212121;
 
       color: #f6f6f6;
+    }
+  }
+
+  @media (min-width: 600px) {
+    .lower .button-grid.extra-buttons {
+      display: grid;
     }
   }
 </style>
